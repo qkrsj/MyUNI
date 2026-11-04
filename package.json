@@ -1,0 +1,18 @@
+{
+  "name": "myuni",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm test --workspaces --if-present",
+    "dev:desktop": "npm run dev -w @myuni/desktop",
+    "dev:server": "npm run dev -w @myuni/server",
+    "migrate": "npm run migrate -w @myuni/server"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

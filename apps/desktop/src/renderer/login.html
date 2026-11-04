@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'" />
+    <title>MyUNi</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #ffffff;
+        --fg: #1c1c1f;
+        --muted: #6b6b76;
+        --line: #d9d9e0;
+        --accent: #2f6fed;
+        --error: #d1343f;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #18181b;
+          --fg: #ececf1;
+          --muted: #a1a1aa;
+          --line: #3f3f46;
+          --accent: #5b8cff;
+          --error: #ff6b74;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 28px 28px 20px;
+        font-family: system-ui, -apple-system, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+        background: var(--bg);
+        color: var(--fg);
+      }
+      h1 {
+        margin: 0 0 4px;
+        font-size: 26px;
+      }
+      .sub {
+        margin: 0 0 20px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .tabs {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 18px;
+        border-bottom: 1px solid var(--line);
+      }
+      .tabs button {
+        flex: 1;
+        padding: 8px;
+        border: 0;
+        border-bottom: 2px solid transparent;
+        background: none;
+        color: var(--muted);
+        font-size: 14px;
+        cursor: pointer;
+      }
+      .tabs button[aria-selected='true'] {
+        color: var(--fg);
+        border-bottom-color: var(--accent);
+        font-weight: 600;
+      }
+      label {
+        display: block;
+        margin-bottom: 12px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      input,
+      select {
+        display: block;
+        width: 100%;
+        margin-top: 4px;
+        padding: 9px 10px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: transparent;
+        color: var(--fg);
+        font-size: 14px;
+      }
+      .submit {
+        width: 100%;
+        margin-top: 6px;
+        padding: 11px;
+        border: 0;
+        border-radius: 8px;
+        background: var(--accent);
+        color: #fff;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .submit:disabled {
+        opacity: 0.6;
+      }
+      .notice {
+        margin: 12px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.5;
+      }
+      .error {
+        min-height: 18px;
+        margin: 8px 0 0;
+        color: var(--error);
+        font-size: 13px;
+      }
+      [hidden] {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>MyUNi</h1>
+    <p class="sub">우리 학교 친구를 키우고 학교 순위를 올려 보세요</p>
+
+    <div class="tabs" role="tablist">
+      <button type="button" role="tab" id="tab-login" aria-selected="true">로그인</button>
+      <button type="button" role="tab" id="tab-signup" aria-selected="false">가입하기</button>
+    </div>
+
+    <form id="form" novalidate>
+      <label>닉네임
+        <input id="nickname" autocomplete="username" minlength="2" maxlength="16" required />
+      </label>
+      <label>비밀번호
+        <input id="password" type="password" autocomplete="current-password" minlength="8" maxlength="72" required />
+      </label>
+      <label id="school-field" hidden>학교
+        <select id="school">
+          <option value="">선택 안 함 (나중에 선택)</option>
+        </select>
+      </label>
+      <button class="submit" id="submit" type="submit">로그인</button>
+      <p class="error" id="error" role="alert"></p>
+      <p class="notice" id="notice" hidden>
+        학교는 한 달에 한 번만 바꿀 수 있어요.<br />
+        기기 고유값은 해시로 변환해 중복 계정 방지용으로만 사용하며, 원본은 저장하지 않아요.
+      </p>
+    </form>
+    <script type="module" src="./login.ts"></script>
+  </body>
+</html>
