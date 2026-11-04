@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MyUNi - 우리 학교 친구 키우기</title>
+  <meta name="description" content="바탕화면 아래를 걸어 다니는 우리 학교 친구를 키우고, 학교끼리 주간 순위를 겨루는 Windows · Mac 게임.">
+  <meta property="og:title" content="MyUNi - 우리 학교 친구 키우기">
+  <meta property="og:description" content="바탕화면 아래를 걸어 다니는 우리 학교 친구를 키우고, 학교끼리 주간 순위를 겨뤄요.">
+  <meta property="og:image" content="https://qkrsj.github.io/myuni/images/walk.png">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="assets/site.css?v=1">
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="./"><img src="images/icon.png" alt="" width="28" height="28">MyUNi</a>
+    <nav>
+      <a href="#install">설치 방법</a>
+      <a href="https://github.com/qkrsj/myuni/releases">업데이트 내역</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>우리 학교 친구가<br>바탕화면을 걸어 다녀요</h1>
+      <p class="lead">켜 두기만 하면 화면 아래에서 자라는 작은 친구.
+        학교 상징 동물과 상징색으로 태어나고, 친구들이 키운 만큼 우리 학교 순위가 올라갑니다.</p>
+
+      <div class="cta">
+        <a class="btn" data-download="auto" href="https://github.com/qkrsj/myuni/releases/latest">
+          <span data-label>최신 버전 받기</span>
+        </a>
+        <p class="files">
+          <a data-download="win" href="https://github.com/qkrsj/myuni/releases/latest/download/MyUNi-Setup.exe">Windows 설치 파일</a>
+          ·
+          <a data-download="mac" href="https://github.com/qkrsj/myuni/releases/latest/download/MyUNi.dmg">Mac (dmg)</a>
+          <span class="version" data-version></span>
+        </p>
+        <p class="notice" data-notice hidden></p>
+      </div>
+
+      <div class="desk" aria-hidden="true">
+        <img src="images/walk.png" alt="" class="walkers">
+        <div class="taskbar"></div>
+      </div>
+    </section>
+
+    <section class="cards">
+      <article>
+        <h2>켜 두면 자라요</h2>
+        <p>컴퓨터를 쓰는 동안 1분마다 경험치가 쌓입니다. 자리를 비우면 친구도 그 자리에서 잠들어요.
+          하루에 얻을 수 있는 경험치에는 상한이 있어서, 오래 켜 둔다고 무작정 앞서가지 않습니다.</p>
+      </article>
+      <article>
+        <h2>먹이 주고 놀아 주기</h2>
+        <p>친구를 오른쪽 클릭(Mac 은 Control + 클릭)하면 먹이를 주거나 같이 놀 수 있어요.
+          하루에 몇 번씩만 할 수 있으니 생각날 때 챙겨 주세요.</p>
+      </article>
+      <article>
+        <h2>알에서 어른까지</h2>
+        <p>알에서 시작해 레벨이 오르면 모습이 바뀝니다.</p>
+        <img src="images/stages.png" alt="알, 아기, 청소년, 어른 단계의 캐릭터" class="stages">
+      </article>
+    </section>
+
+    <section class="league">
+      <h2>학교 대항전</h2>
+      <ul>
+        <li><strong>매주 월요일 0시</strong>에 새 시즌이 시작돼요. 지난주 기록은 그대로 남습니다.</li>
+        <li>같은 학교 친구들이 그 주에 얻은 경험치가 모여 <strong>학교 점수</strong>가 됩니다.</li>
+        <li>개인 순위에서는 닉네임 옆에 학교가 함께 표시돼요.</li>
+        <li>한 컴퓨터에서 여러 계정을 쓸 수는 있지만, 순위에는 <strong>컴퓨터 한 대당 한 계정</strong>만 들어갑니다.</li>
+        <li>학교는 목록에서 고르고, <strong>한 달에 한 번</strong>만 바꿀 수 있어요.</li>
+      </ul>
+    </section>
+
+    <section class="install" id="install">
+      <h2>설치 방법</h2>
+      <div class="cols">
+        <div>
+          <h3>Windows</h3>
+          <ol>
+            <li><a href="https://github.com/qkrsj/myuni/releases/latest/download/MyUNi-Setup.exe">MyUNi-Setup.exe</a> 를 받아서 실행합니다.</li>
+            <li>"Windows의 PC 보호" 창이 뜨면 <strong>추가 정보 → 실행</strong>을 누르세요.
+              아직 코드 서명을 하지 않은 새 프로그램이라 뜨는 창입니다.</li>
+            <li>관리자 권한 없이 설치되고, 시작 메뉴에 MyUNi 가 생깁니다.
+              "윈도우를 켤 때 같이 켜기"를 고르면 매번 켜지 않아도 돼요.</li>
+            <li>트레이(작업표시줄 오른쪽 ^)의 아이콘에서 메뉴를 열 수 있어요.</li>
+          </ol>
+        </div>
+        <div>
+          <h3>Mac</h3>
+          <ol>
+            <li><a href="https://github.com/qkrsj/myuni/releases/latest/download/MyUNi.dmg">MyUNi.dmg</a> 를 받아서 엽니다.</li>
+            <li>MyUNi 를 <strong>응용 프로그램</strong> 폴더로 끌어다 놓습니다.</li>
+            <li>처음 한 번은 응용 프로그램 폴더에서 MyUNi 를 <strong>Control + 클릭 → 열기</strong>로 여세요.
+              "확인되지 않은 개발자" 창이 뜨면 열기를 누르면 됩니다.</li>
+            <li>독에는 안 뜨고, 화면 위쪽 메뉴 막대에 아이콘이 생깁니다.</li>
+          </ol>
+        </div>
+      </div>
+      <p class="sub">처음 켜면 닉네임과 비밀번호로 가입하고 학교를 고릅니다. 학교 인증은 필요 없어요.</p>
+    </section>
+
+    <section class="privacy">
+      <h2>모으는 정보</h2>
+      <ul>
+        <li>닉네임, 고른 학교, 비밀번호 (비밀번호는 되돌릴 수 없는 해시로만 저장)</li>
+        <li>컴퓨터 고유값의 해시 — 같은 사람이 계정을 여러 개 만들어 순위를 올리는 것을 막는 데만 씁니다.
+          고유값 원본은 컴퓨터 밖으로 보내지 않고 저장하지도 않습니다.</li>
+        <li>캐릭터 레벨과 경험치, 하루 · 주간 기록</li>
+      </ul>
+      <p class="sub">IP 주소로 막거나 기록하지 않습니다.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>MyUNi 의 캐릭터는 각 학교의 상징 동물과 상징색으로 만든 오리지널 캐릭터이며, 학교 공식 마스코트가 아닙니다.</p>
+    <p><a href="https://github.com/qkrsj/myuni">GitHub</a></p>
+  </footer>
+
+  <script src="assets/download.js?v=1" defer></script>
+</body>
+</html>

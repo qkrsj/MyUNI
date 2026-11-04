@@ -2,8 +2,12 @@
 #
 #   git tag v0.1.0 && git push origin v0.1.0
 #
-# 크로스 빌드는 안 되므로 러너를 둘 쓴다. 배포판이 붙을 서버 주소는
-# 저장소 Settings > Secrets and variables > Actions > Variables 의 MYUNI_SERVER_URL 이다.
+# 크로스 빌드는 안 되므로 러너를 둘 쓴다. 올리는 파일 이름은 버전 없이 고정이다
+# (MyUNi-Setup.exe, MyUNi.dmg) - 다운로드 페이지(docs/)가 releases/latest/download/<이름> 으로 바로 건다.
+#
+# 배포판이 붙을 서버(내 AWS) 주소는 저장소 Settings > Secrets and variables > Actions >
+# Variables 의 MYUNI_SERVER_URL 이다. 비어 있으면 릴리스를 멈춘다 - 그대로 내보내면
+# 사용자 PC 의 127.0.0.1 로 붙는 판이 나간다.
 #
 # 아직 코드 서명은 하지 않는다. 윈도우는 SmartScreen 경고가, 맥은 "확인되지 않은 개발자"
 # 경고가 뜬다 (맥은 우클릭 > 열기로 처음 한 번 열면 된다).
@@ -39,6 +43,13 @@ jobs:
           echo "태그 $tag / common/version.py $ver"
           [ "$tag" = "v$ver" ] || { echo "::error::태그($tag)와 버전(v$ver)이 다릅니다."; exit 1; }
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
+      - name: 서버 주소 확인
+        run: |
+          url="${{ vars.MYUNI_SERVER_URL }}"
+          case "$url" in
+            https://*) echo "서버: $url" ;;
+            *) echo "::error::저장소 Variables 에 MYUNI_SERVER_URL(https://...)을 넣어 주세요."; exit 1 ;;
+          esac
 
   build:
     needs: check
@@ -62,12 +73,23 @@ jobs:
           pip install -r client/requirements.txt pyinstaller pytest
       - name: 검사
         run: python -m pytest -q common client
+      - name: Inno Setup (윈도우 설치 파일)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          if (-not (Get-Command iscc -ErrorAction SilentlyContinue) -and
+              -not (Test-Path "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe")) {
+            choco install innosetup -y --no-progress
+          }
       - name: 빌드
         run: python tools/build.py --server "${{ vars.MYUNI_SERVER_URL }}"
       - uses: actions/upload-artifact@v4
         with:
           name: build-${{ matrix.os }}
-          path: dist/*.zip
+          path: |
+            dist/MyUNi-Setup.exe
+            dist/MyUNi.dmg
+          if-no-files-found: error
 
   release:
     needs: [check, build]
@@ -84,4 +106,4 @@ jobs:
           tag="${{ needs.check.outputs.tag }}"
           gh release view "$tag" --repo "${{ github.repository }}" >/dev/null 2>&1 \
             || gh release create "$tag" --repo "${{ github.repository }}" --title "MyUNi $tag" --notes "MyUNi $tag"
-          gh release upload "$tag" out/*.zip --repo "${{ github.repository }}" --clobber
+          gh release upload "$tag" out/MyUNi-Setup.exe out/MyUNi.dmg --repo "${{ github.repository }}" --clobber

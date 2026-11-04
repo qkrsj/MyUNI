@@ -67,10 +67,15 @@ cd server && python -m pytest
 
 ## 배포
 
+사용자는 **다운로드 페이지 https://qkrsj.github.io/myuni/** 에서 설치 파일을 받습니다
+(Windows `MyUNi-Setup.exe`, Mac `MyUNi.dmg`). 페이지는 `docs/` 폴더이고 GitHub Pages 로 올라갑니다.
+게임 서버는 내 AWS(Lightsail)에서 돕니다.
+
 - **서버**: Lightsail 인스턴스에서 `bash deploy/setup-aws.sh` (자세한 순서는 스크립트 맨 위 주석).
   올린 뒤에는 `bash deploy/backup.sh --install` 로 매일 백업을 켭니다.
 - **클라이언트**: `common/version.py` 의 버전을 올리고 같은 이름의 태그를 밀면
-  GitHub Actions 가 윈도우 · 맥 배포판을 만들어 릴리스에 올립니다.
+  GitHub Actions 가 윈도우 설치 파일 · 맥 dmg 를 만들어 릴리스에 올립니다.
+  다운로드 페이지의 단추는 늘 최신 릴리스를 가리키므로 페이지는 고칠 필요가 없습니다.
 
 ```bash
 git tag v0.1.0 && git push origin v0.1.0

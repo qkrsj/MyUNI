@@ -73,8 +73,10 @@ class App(object):
     def _check_version(self, server_version):
         if isinstance(server_version, Exception) or compatible(server_version):
             return
-        messagebox.showinfo("MyUNi", "새 버전(%s)이 나왔습니다. 지금 버전: %s\n새 버전을 받아 주세요."
-                            % (server_version, VERSION))
+        if messagebox.askyesno("MyUNi", "새 버전(%s)이 나왔습니다. 지금 버전: %s\n\n"
+                               "다운로드 페이지를 열까요?" % (server_version, VERSION)):
+            import webbrowser
+            webbrowser.open(config.DOWNLOAD_PAGE)
 
     def show_login(self):
         if self.login_window is not None:

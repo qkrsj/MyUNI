@@ -5,7 +5,9 @@
     pip install -r client/requirements.txt pyinstaller
     python tools/build.py --server https://myuni.example.com
 
-결과: dist/MyUNi-<버전>-windows.zip  또는  dist/MyUNi-<버전>-mac.zip
+결과 (이름에 버전을 안 넣는다 - 다운로드 페이지가 releases/latest/download/<이름> 으로 바로 건다):
+    윈도우  dist/MyUNi-Setup.exe   설치 파일 (Inno Setup 필요, tools/installer.iss)
+    맥      dist/MyUNi.dmg         .app 을 응용 프로그램 폴더로 끌어 넣는 디스크 이미지
 """
 import argparse
 import os
@@ -71,23 +73,62 @@ def main():
 
     dist = os.path.join(ROOT, "dist")
     if sys.platform == "darwin":
-        app = os.path.join(dist, NAME + ".app")
-        plist_path = os.path.join(app, "Contents", "Info.plist")
-        with open(plist_path, "rb") as f:
-            plist = plistlib.load(f)
-        # 독에 안 뜨는 앱 (메뉴 막대 아이콘만). 코드에서도 숨기지만, 켜지는 순간 한 번 튀는 것까지 막는다.
-        plist["LSUIElement"] = True
-        plist["CFBundleShortVersionString"] = VERSION
-        plist["CFBundleVersion"] = VERSION
-        with open(plist_path, "wb") as f:
-            plistlib.dump(plist, f)
-        target, label = app, "mac"
+        out = package_mac(dist, work)
+    elif sys.platform == "win32":
+        out = package_windows(dist, icon)
     else:
-        target, label = os.path.join(dist, NAME), "windows" if sys.platform == "win32" else "linux"
+        out = shutil.make_archive(os.path.join(dist, NAME + "-linux"), "zip", dist, NAME)
+    print("만듦:", out)
 
-    archive = os.path.join(dist, "%s-%s-%s" % (NAME, VERSION, label))
-    shutil.make_archive(archive, "zip", os.path.dirname(target), os.path.basename(target))
-    print("만듦:", archive + ".zip")
+
+def package_mac(dist, work):
+    app = os.path.join(dist, NAME + ".app")
+    plist_path = os.path.join(app, "Contents", "Info.plist")
+    with open(plist_path, "rb") as f:
+        plist = plistlib.load(f)
+    # 독에 안 뜨는 앱 (메뉴 막대 아이콘만). 코드에서도 숨기지만, 켜지는 순간 한 번 튀는 것까지 막는다.
+    plist["LSUIElement"] = True
+    plist["CFBundleShortVersionString"] = VERSION
+    plist["CFBundleVersion"] = VERSION
+    with open(plist_path, "wb") as f:
+        plistlib.dump(plist, f)
+
+    # 디스크 이미지 안에 앱과 '응용 프로그램' 바로 가기를 나란히 둔다 (끌어다 놓으면 설치)
+    stage = os.path.join(work, "dmg")
+    os.makedirs(stage)
+    shutil.copytree(app, os.path.join(stage, NAME + ".app"), symlinks=True)
+    os.symlink("/Applications", os.path.join(stage, "Applications"))
+    out = os.path.join(dist, NAME + ".dmg")
+    subprocess.check_call(["hdiutil", "create", "-volname", NAME, "-srcfolder", stage,
+                           "-ov", "-format", "UDZO", out])
+    return out
+
+
+def find_iscc():
+    found = shutil.which("iscc")
+    if found:
+        return found
+    for base in (os.environ.get("ProgramFiles(x86)"), os.environ.get("ProgramFiles"),
+                 os.path.join(os.environ.get("LOCALAPPDATA", ""), "Programs")):
+        if base:
+            p = os.path.join(base, "Inno Setup 6", "ISCC.exe")
+            if os.path.exists(p):
+                return p
+    return None
+
+
+def package_windows(dist, icon):
+    iscc = find_iscc()
+    if not iscc:
+        raise SystemExit("Inno Setup 6 이 없습니다. https://jrsoftware.org/isdl.php 에서 깔거나 "
+                         "'choco install innosetup' 을 돌리세요.")
+    subprocess.check_call([iscc, "/Q",
+                           "/DAppVersion=" + VERSION,
+                           "/DSourceDir=" + os.path.join(dist, NAME),
+                           "/DOutputDir=" + dist,
+                           "/DIconFile=" + icon,
+                           os.path.join(ROOT, "tools", "installer.iss")])
+    return os.path.join(dist, NAME + "-Setup.exe")
 
 
 if __name__ == "__main__":

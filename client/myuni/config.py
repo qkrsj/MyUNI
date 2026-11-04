@@ -26,6 +26,9 @@ def _bundled_server_url():
 
 SERVER_URL = (os.environ.get("MYUNI_SERVER") or _bundled_server_url() or DEFAULT_SERVER).rstrip("/")
 
+# 사용자가 앱을 받는 페이지 (docs/ 가 GitHub Pages 로 올라간다). 새 버전이 나오면 여기로 보낸다.
+DOWNLOAD_PAGE = "https://qkrsj.github.io/myuni/"
+
 _DATA_DIR = None
 
 
