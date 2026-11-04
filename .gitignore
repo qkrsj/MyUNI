@@ -1,9 +1,18 @@
-node_modules/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+build/
 dist/
-out/
-release/
-*.log
+*.spec
+
+# 로컬 DB 와 비밀 값
+*.db
+*.db-wal
+*.db-shm
+server/device_salt
+deploy/.env
 .env
-.env.*
-!.env.example
+
 .DS_Store

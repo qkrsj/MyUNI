@@ -1,0 +1,29 @@
+# 개발용. 내 PC 에서 서버를 띄운다 (클라이언트 기본 주소 http://127.0.0.1:8787).
+#
+#   docker compose up -d --build
+#
+# 서버에 올릴 때는 deploy/docker-compose.prod.yml 을 쓴다 (HTTPS 포함).
+services:
+  myuni-server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    image: myuni-server:latest
+    container_name: myuni-server
+    restart: unless-stopped
+    ports:
+      - "8787:8080"
+    volumes:
+      - myunidata:/data
+    environment:
+      MYUNI_DB: /data/myuni.db
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/api/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  myunidata:

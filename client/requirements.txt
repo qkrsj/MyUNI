@@ -1,0 +1,10 @@
+pillow>=10.0
+requests>=2.28
+
+# 트레이 아이콘 (윈도우). 맥은 pystray 의 NSApplication.run() 이 tkinter 와 부딪혀
+# 죽으므로 쓰지 않는다 - tray_mac.py 가 대신한다.
+pystray>=0.19; sys_platform != "darwin"
+
+# 맥 전용. 없으면 창이 투명해지지 않고(캐릭터가 네모난 판 위에 뜬다) 메뉴 막대 아이콘도 없다.
+pyobjc-framework-Cocoa>=10.0; sys_platform == "darwin"
+pyobjc-framework-Quartz>=10.0; sys_platform == "darwin"

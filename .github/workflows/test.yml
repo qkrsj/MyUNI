@@ -1,0 +1,48 @@
+# 밀어 넣을 때마다 검사를 돌린다. 서버 검사는 임시 SQLite 파일에 서버를 띄워서 한다.
+name: test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: 규칙 · 클라이언트 로직 · 서버
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: 준비물
+        run: pip install -r server/requirements.txt pytest httpx pillow requests
+      - name: 공용 규칙
+        run: python -m pytest -q common
+      - name: 클라이언트 게임 로직 · 도트
+        run: python -m pytest -q client
+      - name: 서버
+        working-directory: server
+        run: python -m pytest -q
+
+  docker:
+    name: 서버 이미지 빌드
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: 빌드하고 띄워서 확인
+        run: |
+          docker build -f server/Dockerfile -t myuni-server .
+          docker run -d --name s -p 8080:8080 myuni-server
+          for i in $(seq 1 20); do curl -fsS localhost:8080/api/health && exit 0; sleep 1; done
+          docker logs s; exit 1

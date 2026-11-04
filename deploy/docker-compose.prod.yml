@@ -1,0 +1,63 @@
+# 서버에 올릴 때 쓰는 구성 (AWS Lightsail 리눅스 VM 한 대).
+# 개발용(../docker-compose.yml)과 다른 점:
+#
+#   - Caddy 가 앞에서 HTTPS 를 처리한다 (인증서 자동 발급 · 갱신)
+#   - 서버 포트를 바깥으로 열지 않는다. Caddy 만 들어갈 수 있다
+#
+#   docker compose -f deploy/docker-compose.prod.yml up -d --build
+
+services:
+  myuni-server:
+    build:
+      context: ..
+      dockerfile: server/Dockerfile
+    image: myuni-server:latest
+    container_name: myuni-server
+    restart: unless-stopped
+    expose:
+      - "8080"                     # 호스트에 노출하지 않는다
+    volumes:
+      - myunidata:/data
+    environment:
+      MYUNI_DB: /data/myuni.db
+      # 비워 두면 /data/device_salt 파일을 만들어 쓴다 (백업에 같이 들어간다).
+      MYUNI_DEVICE_SALT: ${MYUNI_DEVICE_SALT:-}
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/api/health')"]
+      interval: 60s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: myuni-caddy
+    restart: unless-stopped
+    depends_on:
+      - myuni-server
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddydata:/data
+      - caddyconfig:/config
+    environment:
+      MYUNI_DOMAIN: ${MYUNI_DOMAIN:?MYUNI_DOMAIN 을 deploy/.env 에 넣어 주세요}
+      ACME_EMAIL: ${ACME_EMAIL:?ACME_EMAIL 을 deploy/.env 에 넣어 주세요}
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  myunidata:
+  caddydata:
+  caddyconfig:
